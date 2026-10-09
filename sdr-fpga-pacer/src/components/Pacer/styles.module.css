@@ -1,0 +1,75 @@
+.pacerContainer {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.phaseCard {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: var(--ifm-background-surface-color);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.phaseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.phaseTitle {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.progressBarContainer {
+  width: 100%;
+  background-color: var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  height: 12px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: var(--ifm-color-primary);
+  transition: width 0.3s ease;
+}
+
+.taskList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.taskItem input[type="checkbox"] {
+  margin-right: 1rem;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.pacerHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.pacerHeader h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.pacerHeader p {
+  font-size: 1.2rem;
+  color: var(--ifm-color-emphasis-600);
+}
