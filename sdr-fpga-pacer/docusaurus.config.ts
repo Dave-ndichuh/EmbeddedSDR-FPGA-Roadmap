@@ -9,10 +9,10 @@ const config: Config = {
   tagline: 'Personal Pacer and Documentor for SDR & FPGA Engineering',
   favicon: 'img/favicon.ico',
 
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://embedded-sdr-fpga-roadmap.vercel.app',
   baseUrl: '/',
-  organizationName: 'your-org',
-  projectName: 'sdr-fpga-pacer',
+  organizationName: 'Dave-ndichuh',
+  projectName: 'EmbeddedSDR-FPGA-Roadmap',
 
   onBrokenLinks: 'throw',
 
@@ -30,7 +30,7 @@ const config: Config = {
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex],
         },
-        blog: false, // Disabling blog as we are focusing on curriculum docs
+        blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -66,7 +66,7 @@ const config: Config = {
           label: 'Curriculum Phases',
         },
         {
-          href: 'https://github.com/your-username/sdr-fpga-pacer',
+          href: 'https://github.com/Dave-ndichuh/EmbeddedSDR-FPGA-Roadmap',
           label: 'GitHub',
           position: 'right',
         },
