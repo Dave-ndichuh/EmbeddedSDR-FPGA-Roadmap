@@ -8,64 +8,124 @@ Moving from Python/C++ to Verilog requires a massive mental shift. You are no lo
 
 In an FPGA, everything happens simultaneously. If you write 100 lines of Verilog, all 100 lines are essentially executing at the exact same time in parallel.
 
-## 1. Combinational vs. Sequential Logic
+## Deep Dive: Why the Mental Shift Matters
 
-Digital hardware is divided into two strict categories. Mixing them improperly is the #1 cause of FPGA bugs.
+In software (C/Python), instructions sit in RAM and are executed in program order by an ALU. In Verilog, your code is an **elaboration blueprint**:
 
-### Combinational Logic
-Logic where the output depends **only** on the current state of the inputs. There is no memory, no clock, and no history. Think of it as pure math operations (AND, OR, Addition, Multiplication).
+- **Gates and Wires:** You are instantiating physical Look-Up Tables (LUTs), dedicated arithmetic blocks (DSPs), and multiplexers.
+- **Propagation Delay:** In combinational logic, signals travel as electrical waveforms. Changes propagate through gates with physical delays ($t_{pd}$). There is no instruction pointer—wires continuously carry voltage levels.
+- **Setup & Hold Times:** In sequential logic, data arriving at a flip-flop must be stable before the clock edge ($t_{\text{setup}}$) and remain stable after the clock edge ($t_{\text{hold}}$) to prevent entering an invalid, metastable state.
 
-**Implementation:**
+---
+
+## 1. Combinational Logic & Latch Generation
+
+Combinational logic is logic where the output depends **only** on the current state of the inputs. There is no memory, no clock, and no history. Think of it as pure math operations (AND, OR, Addition, Multiplexing).
+
+### Implementation
 Use the `assign` keyword for simple logic, or an `always @(*)` block for complex routing.
 ```verilog
 // Continuous Assignment
 assign sum = a + b;
 assign is_equal = (a == b) ? 1'b1 : 1'b0;
+```
 
-// Always block (combinational)
+### ⚠️ Trap: Inadvertent Latch Generation (Combinational Hazard)
+In an `always @(*)` combinational block, if any output signal is not explicitly assigned a value across **all possible execution branches**, the synthesis tool infers a transparent hardware latch rather than pure combinational gates.
+
+Latches introduce asynchronous feedback loops, timing closure complications, and severe glitch susceptibility in FPGAs.
+
+**Prevention Strategy:**
+Always provide an explicit `else` or default clause for every condition:
+```verilog
 always @(*) begin
     if (enable)
         out = data_in;
     else
-        out = 8'b0;
+        out = 8'b0; // Explicitly handled
 end
 ```
-
-### Sequential Logic
-Logic where the output depends on current inputs **and** past states. This requires memory (Flip-Flops) and is driven by a **Clock**. 
-
-**Implementation:**
-Use an `always @(posedge clk)` block. This tells the synthesizer to instantiate physical D-Flip-Flops triggered on the rising edge of the clock signal.
+Or assign safe default values at the very top of the `always @(*)` block:
 ```verilog
-always @(posedge clk or posedge reset) begin
-    if (reset) begin
-        counter <= 8'b0;      // Reset state
-    end else if (enable) begin
-        counter <= counter + 1'b1; // Memory / State change
-    end
+always @(*) begin
+    out = 8'b0; // Default assignment prevents latch inference
+    if (enable)
+        out = data_in;
 end
 ```
 
-## 2. Blocking vs. Non-Blocking Assignments
+---
 
-This is the most critical syntax rule in Verilog.
+## 2. Sequential Logic & Assignment Mechanics
 
-- **Blocking (`=`):** Used **ONLY** in Combinational logic (`always @(*)`). It evaluates sequentially within the block, blocking the next line until it finishes.
-- **Non-Blocking (`<=`):** Used **ONLY** in Sequential logic (`always @(posedge clk)`). All non-blocking assignments in a block evaluate simultaneously at the clock edge.
+Sequential logic depends on current inputs **and** past states. This requires memory (Flip-Flops) and is driven by a **Clock**. Use an `always @(posedge clk)` block.
 
-**The Race Condition Trap:**
-If you use blocking assignments (`=`) inside a clocked block, you will create a race condition. Simulation might behave differently than physical hardware because the synthesizer doesn't know which line to evaluate first.
+### The Mechanics of Non-Blocking (`<=`) vs. Blocking (`=`)
 
-**The Golden Rule:**
-> *Never use `<=` and `=` in the same `always` block.*
+The distinction between `=` and `<=` corresponds to different regions in the IEEE Verilog simulation cycle:
 
-## 3. Clock Domains
+- **Blocking (`=`):** Evaluated in the Active Events region immediately in source-text order.
+- **Non-Blocking (`<=`):** RHS (Right-Hand Side) expressions are evaluated and captured during the Active region, but the updates to the LHS (Left-Hand Side) are scheduled into the NBA (Non-Blocking Assignment) Update region. All registers update concurrently after all evaluations settle.
 
-In complex SDR systems, data moves between different speed domains. For example, your ADC might sample at $100 \text{ MHz}$, but your USB controller might run at $60 \text{ MHz}$.
+### Example Comparison (Shift Register)
 
-You cannot simply wire a signal from a $100 \text{ MHz}$ `always` block into a $60 \text{ MHz}$ `always` block. Because the clocks are asynchronous to each other, the receiving flip-flop might sample the signal exactly as it's transitioning between 0 and 1. This causes **Metastability**, where the flip-flop gets "stuck" between voltage levels, crashing your pipeline.
+```verilog
+// Intended: 2-stage shift register using <=
+always @(posedge clk) begin
+    b <= a;
+    c <= b; // 'c' receives old value of 'b'
+end
+// Hardware inferred: Two cascaded flip-flops.
 
-*Note: We will cover Clock Domain Crossing (CDC) mechanisms like Async FIFOs in Phase 4.*
+// Broken: Using =
+always @(posedge clk) begin
+    b = a;
+    c = b; // 'c' immediately receives 'a'!
+end
+// Hardware inferred: One flip-flop ('a' drives both 'b' and 'c' directly).
+```
+
+### Resolving Mixed Blocks
+
+Consider this broken mental exercise pattern:
+```verilog
+always @(posedge clk) begin
+    temp = a & b;
+    q <= temp | c;
+end
+```
+While simulators might technically execute this sequentially in the active queue, synthesizing this style leads to simulation/synthesis mismatches (RTL bugs vs. gate-level behavior) and violates strict team linting rules.
+
+**Standard Fix 1: Combinational generation for intermediate signals**
+```verilog
+wire temp;
+assign temp = a & b;
+
+always @(posedge clk) begin
+    q <= temp | c;
+end
+```
+
+**Standard Fix 2: Pure non-blocking sequential block (if intermediate state is registered)**
+```verilog
+reg temp;
+always @(posedge clk) begin
+    temp <= a & b;
+    q    <= temp | c; // Note: 'temp' now has 1 cycle of latency
+end
+```
+
+---
+
+## 3. Practical Rules of Thumb (Industry Standard)
+
+To avoid hardware traps, memorize this RTL Coding Style Summary:
+
+- **`assign`** $\rightarrow$ Simple combinational logic, intermediate wires, bus concatenation.
+- **`always @(*)`** $\rightarrow$ Complex combinational logic, priority encoders, decoders, multiplexers. **Always use blocking `=`.**
+- **`always @(posedge clk)`** $\rightarrow$ Registers, counters, state machines, pipelines. **Always use non-blocking `<=`.**
+
+> **SystemVerilog Note:** Modern designs often migrate to SystemVerilog. It introduces the keywords `always_comb`, `always_ff`, and `always_latch`. These enforce the above rules at compile time and emit hard warnings if a latch is accidentally inferred in a combinational block.
 
 ---
 
@@ -74,11 +134,3 @@ You cannot simply wire a signal from a $100 \text{ MHz}$ `always` block into a $
    - `Verilog Language -> Basics`
    - `Circuits -> Combinational Logic`
    - `Circuits -> Sequential Logic -> Latches and Flip-Flops`
-2. **Mental Exercise:** Look at the following code. Is it creating Combinational or Sequential hardware? Does it violate the Golden Rule?
-```verilog
-always @(posedge clk) begin
-    temp = a & b;
-    q <= temp | c;
-end
-```
-*(Answer: It creates Sequential hardware because of `posedge clk`, but it violates the Golden Rule by mixing `=` and `<=`. In industry code, `temp` should either be calculated outside the block using `assign`, or the whole block should strictly use `<=`).*
