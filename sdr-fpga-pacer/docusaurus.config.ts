@@ -66,6 +66,11 @@ const config: Config = {
           label: 'Curriculum Phases',
         },
         {
+          to: '/glossary',
+          label: 'Field Codex & Thesaurus 📖',
+          position: 'left',
+        },
+        {
           href: 'https://github.com/Dave-ndichuh/EmbeddedSDR-FPGA-Roadmap',
           label: 'GitHub',
           position: 'right',

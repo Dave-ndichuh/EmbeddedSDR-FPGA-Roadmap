@@ -97,6 +97,18 @@ export default function PacerDashboard() {
         </div>
       </div>
 
+      <div className={styles.codexBanner}>
+        <div className={styles.codexBannerContent}>
+          <h3>📖 The SDR & FPGA Field Codex & Thesaurus</h3>
+          <p>
+            Demystify cross-disciplinary jargon, master 2 AM war stories, and quiz yourself with interactive flashcards across DSP, HDL, Fixed-Point, and SoC architecture.
+          </p>
+        </div>
+        <Link to="/glossary" className={styles.codexBannerBtn}>
+          Explore Codex & Flashcards ⚡
+        </Link>
+      </div>
+
       {PHASES.map((phase) => {
         const phaseProgress = calculatePhaseProgress(phase.tasks);
         return (
