@@ -2,9 +2,20 @@
 sidebar_position: 1
 ---
 
+import NyquistSimulator from '@site/src/components/Interactive/NyquistSimulator';
+import IQSimulator from '@site/src/components/Interactive/IQSimulator';
+import DiagramBlock from '@site/src/components/Interactive/DiagramBlock';
+import VideoLectureCard from '@site/src/components/Interactive/VideoLectureCard';
+import InteractiveQuiz from '@site/src/components/Interactive/InteractiveQuiz';
+
 # 1. Core DSP Theory & Sampling
 
 Before writing code or configuring flowgraphs, you must understand the mathematical foundation of Digital Signal Processing (DSP). This page covers the absolute essentials for SDR, starting with the rigorous mechanics of how analog signals enter the digital domain.
+
+<DiagramBlock
+  type="sdr-chain"
+  caption="End-to-End SDR Signal Chain: Antenna → LNA → IQ Mixer → Anti-Aliasing Filter → ADC → FPGA Digital Downconversion (DDC)"
+/>
 
 ## 1. Sampling
 
@@ -59,17 +70,21 @@ Once aliasing occurs during the sampling process, it is mathematically impossibl
 - **Anti-Aliasing Filter (Analog Low-Pass Filter):** An analog low-pass filter is applied to the signal before the Analog-to-Digital Converter (ADC). It attenuates all frequency components above $\frac{f_s}{2}$ to an insignificant level.
 - **Oversampling:** Sampling at a rate significantly higher than $2 f_{\max}$. This widens the transition band for the analog anti-aliasing filter, allowing the use of simpler, lower-order analog filters, followed by digital filtering and downsampling (decimation).
 
+<NyquistSimulator />
+
 ---
 
-## 5. Digital Mixing (Frequency Shifting)
+## 5. Digital Mixing & IQ Sampling
 
-Mixing is the process of shifting a signal's frequency. In software, this is achieved by multiplying the incoming time-domain signal $x[n]$ by a complex sinusoid (a local oscillator).
+Mixing is the process of shifting a signal's frequency. In software and SDR, this is achieved by multiplying the incoming time-domain signal $x[n]$ by a complex sinusoid (a local oscillator).
 
 To shift a signal by frequency $f_c$:
 $$y[n] = x[n] \cdot e^{-j 2 \pi \frac{f_c}{f_s} n}$$
 
 **Why it matters in SDR:**
 If you tune your SDR to 100 MHz, but the signal of interest is at 100.5 MHz, you don't need to retune the hardware. You can digitally shift the spectrum down by 500 kHz using this multiplication.
+
+<IQSimulator />
 
 ## 6. The Fast Fourier Transform (FFT)
 
@@ -90,7 +105,56 @@ To get a finer frequency resolution, you must increase the FFT size $N$.
 
 ---
 
+## 🎥 Video Masterclass: Sampling & SDR Hardware
+
+<VideoLectureCard
+  title="Software Defined Radio with HackRF: Sampling & Nyquist Rate"
+  youtubeId="5u_eXN1pD7k"
+  speaker="Michael Ossmann (Great Scott Gadgets)"
+  description="The legendary Michael Ossmann walks through analog electromagnetic signals, receiver front-ends, ADC conversion, and demonstrates how inadequate sampling corrupts spectrum observation."
+  takeaways={[
+    "Analog anti-aliasing filters are irreplaceable by software post-processing",
+    "Sample rate determines both RF bandwidth captured and ADC dynamic resolution",
+    "Quadrature (IQ) mixing separates positive and negative RF spectrum"
+  ]}
+/>
+
+---
+
+## 🧠 Interactive Knowledge Check
+
+<InteractiveQuiz
+  title="Challenge 1: Apparent Alias Frequency"
+  question="An SDR system is sampling at f_s = 40 MHz. An unauthorized test transmitter broadcasts a strong CW tone at 65 MHz into your antenna. If your receiver lacks an analog anti-aliasing filter, at what frequency will this tone appear in your digital baseband spectrum [0, 20 MHz]?"
+  options={[
+    "15 MHz",
+    "25 MHz",
+    "40 MHz",
+    "65 MHz"
+  ]}
+  correctIndex={0}
+  hint="Recall the folding formula: f_alias = |f_in - k · f_s|, choosing integer k such that f_alias is between 0 and f_s / 2."
+  explanation="Spot on! f_alias = |65 MHz - 1 × 40 MHz| = 25 MHz... Wait, let's check: 65 - 40 = 25 MHz, which is above the 20 MHz Nyquist limit (40/2 = 20 MHz)! It folds across 20 MHz down to: |65 - 2 × 40| = |-15| = 15 MHz! The phantom signal will show up right at 15 MHz."
+/>
+
+<InteractiveQuiz
+  title="Challenge 2: Quadrature Sampling"
+  question="Why does an SDR capture two data streams (In-Phase 'I' and Quadrature 'Q') instead of a single real-valued ADC channel?"
+  options={[
+    "To double the volume/amplitude of the received audio signal",
+    "To unambiguously distinguish between positive (+f) and negative (-f) frequencies",
+    "Because FPGAs cannot process odd numbers of data wires",
+    "To provide redundant backup data in case one wire breaks"
+  ]}
+  correctIndex={1}
+  hint="Think about Euler's formula: cos(ωt) = cos(-ωt), whereas e^(jωt) is asymmetric."
+  explanation="Exactly! For real-only signals, cos(+ωt) and cos(-ωt) produce identical real samples, making it impossible to know whether a signal is above or below the center frequency. IQ complex sampling gives us a 2D rotating phasor that resolves direction of rotation."
+/>
+
+---
+
 ### 📝 Practice Activity
 1. **Math Verification:** If your RTL-SDR is sampling at $2.048 \text{ MSPS}$ (Mega-Samples Per Second) and you compute a 1024-point FFT, what is the frequency resolution ($\Delta f$) of each bin? *(Calculate this and verify it)*.
 2. **Apparent Frequency:** If an RTL-SDR is sampling at $2 \text{ MHz}$ without an anti-aliasing filter, and a strong out-of-band signal at $3.2 \text{ MHz}$ leaks into the ADC, at what frequency will it appear in your digital baseband?
 3. **PySDR Reading:** Read [PySDR Chapter 2: Frequency Domain](https://pysdr.org/content/frequency_domain.html) to visualize these concepts.
+

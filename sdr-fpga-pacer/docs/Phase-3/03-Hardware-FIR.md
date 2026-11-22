@@ -2,6 +2,9 @@
 sidebar_position: 3
 ---
 
+import DiagramBlock from '@site/src/components/Interactive/DiagramBlock';
+import InteractiveQuiz from '@site/src/components/Interactive/InteractiveQuiz';
+
 # 3. Hardware FIR Filters
 
 Translating the FIR filter equation $y[n] = \sum_{k=0}^{M} b_k \cdot x[n-k]$ into hardware requires orchestrating hundreds of multiplications and additions at hundreds of megahertz.
@@ -11,6 +14,11 @@ FPGAs contain hardened silicon blocks called **DSP Slices** (e.g., DSP48E1 in Xi
 Instead of building multipliers out of generic LUTs (which is huge and slow), the synthesizer maps your Verilog code directly into these DSP slices.
 
 ## Architecture: Transposed vs. Direct Form
+
+<DiagramBlock
+  type="fir-architecture"
+  caption="Pipelined Transposed FIR Filter: Input broadcasts to all multipliers simultaneously; delay registers z^-1 sit between adders to guarantee O(1) critical path delay."
+/>
 
 There are two primary ways to wire a hardware FIR filter:
 
@@ -76,6 +84,40 @@ module fir_4tap_transposed #(
 
 endmodule
 ```
+
+---
+
+## 🧠 Interactive Knowledge Check
+
+<InteractiveQuiz
+  title="Challenge 1: Direct Form vs. Transposed FIR Critical Path"
+  question="Why is the Transposed Form FIR filter preferred over the Direct Form FIR filter when designing high-speed (>200 MHz) filters with many taps (e.g., 64 taps) on FPGAs?"
+  options={[
+    "Transposed Form does not require any multiplications",
+    "In Transposed Form, the critical path is independent of tap count (1 multiplier + 1 adder), whereas Direct Form has a large multi-input adder tree with long routing delays",
+    "Transposed Form consumes 75% fewer flip-flops than Direct Form",
+    "Direct Form filters can only process integer signals, while Transposed Form natively supports floats"
+  ]}
+  correctIndex={1}
+  hint="Look at the diagram above: what sits between every addition in the Transposed structure?"
+  explanation="Exactly! In Transposed Form, registers (z^-1) sit right between each adder stage. Therefore, the critical path between registers is just a single multiplication followed by a single addition, regardless of whether you have 4 taps or 128 taps!"
+/>
+
+<InteractiveQuiz
+  title="Challenge 2: Symmetric Coefficient Optimization"
+  question="A Root-Raised Cosine (RRC) filter has 33 symmetric taps (b0 = b32, b1 = b31, etc.). How does utilizing the FPGA DSP slice 'Pre-Adder' optimize hardware utilization?"
+  options={[
+    "It doubles the clock speed of the FPGA",
+    "It adds the symmetric input samples together BEFORE the multiplier, cutting the number of required multipliers from 33 down to 17",
+    "It eliminates the need for Block RAM",
+    "It converts the filter from an FIR into an IIR filter"
+  ]}
+  correctIndex={1}
+  hint="b0*x[n] + b0*x[n-32] = b0*(x[n] + x[n-32]). How many multiplications is that?"
+  explanation="Spot on! By using the distributive property, b0*(x[n] + x[n-32]) requires 1 addition and only 1 multiplication instead of 2. Modern DSP slices (like Xilinx DSP48E1/E2) have a dedicated pre-adder baked into the silicon block right before the multiplier!"
+/>
+
+---
 
 ### 📝 Practice Activity
 1. **Pipeline Depth:** Look at the Verilog code above. If a change occurs at `x_in`, how many clock cycles does it take for that change to fully propagate through to `y_out`? 
