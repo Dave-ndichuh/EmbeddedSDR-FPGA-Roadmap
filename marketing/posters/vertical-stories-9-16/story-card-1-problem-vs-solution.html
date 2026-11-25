@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Status / Story Card 1 | Nexus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #030712;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    /* 9:16 Vertical Card (1080 x 1920 scale) */
+    .story-card {
+      width: 450px;
+      height: 800px;
+      background: #090d16;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 28px;
+      padding: 36px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.9), 0 0 35px rgba(56, 189, 248, 0.2);
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(168, 85, 247, 0.12) 0%, transparent 40%);
+    }
+
+    .story-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #38bdf8, #a855f7, #10b981);
+    }
+
+    /* Top Brand */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-tag {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ffffff, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .founder-tag {
+      font-size: 11px;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Main Hook */
+    .hook-area {
+      margin: 16px 0;
+    }
+
+    .hook-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #f43f5e;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .hook-title {
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .hook-title span {
+      background: linear-gradient(90deg, #38bdf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hook-sub {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    /* Comparison Box */
+    .comparison-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .comp-item {
+      padding: 14px 16px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .comp-item.bad {
+      background: rgba(244, 63, 94, 0.08);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+
+    .comp-item.good {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.08);
+    }
+
+    .comp-icon {
+      font-size: 18px;
+    }
+
+    .comp-text h4 {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 2px;
+      color: #fff;
+    }
+
+    .comp-text p {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    /* Bottom Interactive CTA */
+    .bottom-cta {
+      background: linear-gradient(135deg, #0284c7, #9333ea);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .bottom-cta h3 {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .bottom-cta p {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .swipe-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      background: #ffffff;
+      color: #0f172a;
+      padding: 6px 16px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="story-card">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="brand-tag">NEXUS</div>
+      <div class="founder-tag">Tech by <strong>Macharia Ndichu</strong></div>
+    </div>
+
+    <!-- Main Hook -->
+    <div class="hook-area">
+      <div class="hook-badge">The Paradigm Shift</div>
+      <h1 class="hook-title">
+        The Death of the <span>Static Textbook</span>
+      </h1>
+      <p class="hook-sub">
+        Why reading 500-page PDFs gives only ~10% retention, and how browser-native interactive software engines fix it.
+      </p>
+    </div>
+
+    <!-- Comparison -->
+    <div class="comparison-container">
+      <div class="comp-item bad">
+        <div class="comp-icon">❌</div>
+        <div class="comp-text">
+          <h4>Static Documents & Slides</h4>
+          <p>Passive reading, abstract Greek symbols on paper, zero spatial intuition, high student dropout rates.</p>
+        </div>
+      </div>
+
+      <div class="comp-item good">
+        <div class="comp-icon">✅</div>
+        <div class="comp-text">
+          <h4>Nexus Interactive Engines</h4>
+          <p>Hands-on parameter sliders, real-time waveform reactions, instant-search field codex, 75%+ retention.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="bottom-cta">
+      <h3>Experience the Flagship Platform</h3>
+      <p>Tested on complex FPGA & DSP Engineering</p>
+      <div class="swipe-pill">Swipe Up or Reply to Test Free ↗</div>
+    </div>
+  </div>
+
+</body>
+</html>

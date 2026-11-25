@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus | Interactive Learning Engines by Macharia Ndichu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.4);
+      --secondary: #a855f7;
+      --accent: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    .poster-container {
+      width: 100%;
+      max-width: 1000px;
+      background: rgba(11, 17, 33, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 28px;
+      padding: 50px 60px;
+      box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.7), 0 0 40px -10px var(--primary-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .poster-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+    }
+
+    /* Top Branding Header */
+    .brand-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 24px;
+      margin-bottom: 36px;
+    }
+
+    .brand-logo-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7, #7e22ce);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+
+    .brand-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: none;
+      stroke: white;
+      stroke-width: 2.2;
+    }
+
+    .brand-text h1 {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #ffffff, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .creator-badge {
+      text-align: right;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .creator-badge span {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .creator-badge strong {
+      font-size: 14px;
+      color: #f1f5f9;
+      font-weight: 700;
+    }
+
+    /* Main Hero Headline */
+    .hero-title-area {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero-tagline {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: 42px;
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(120deg, #38bdf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Showcase Section: SDR & FPGA Pacer */
+    .showcase-card {
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 36px;
+      position: relative;
+    }
+
+    .showcase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 14px;
+    }
+
+    .showcase-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .showcase-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+      background: rgba(56, 189, 248, 0.08);
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .showcase-features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .feature-box h4 {
+      font-size: 15px;
+      color: #ffffff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Service Pitch / Custom Offer Banner */
+    .service-banner {
+      background: linear-gradient(135deg, rgba(88, 28, 135, 0.4) 0%, rgba(14, 116, 144, 0.4) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+
+    .service-banner h3 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .service-banner p {
+      font-size: 15px;
+      color: #cbd5e1;
+      max-width: 720px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+    }
+
+    .discipline-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    /* Footer / Call To Action */
+    .poster-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 24px;
+    }
+
+    .cta-message {
+      font-size: 15px;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .cta-message span {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .cta-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+      transition: transform 0.2s;
+    }
+
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      .poster-container {
+        box-shadow: none;
+        border: none;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="poster-container">
+    <!-- Brand Header -->
+    <header class="brand-header">
+      <div class="brand-logo-group">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Nexus</h1>
+          <p>Interactive Learning Engines</p>
+        </div>
+      </div>
+      <div class="creator-badge">
+        <span>Founded & Engineered By</span>
+        <strong>Macharia Ndichu • Tech by Macharia Ndichu</strong>
+      </div>
+    </header>
+
+    <!-- Main Hero Headline -->
+    <div class="hero-title-area">
+      <div class="hero-tagline">The Future of Curriculum Delivery</div>
+      <h2 class="hero-title">
+        Transforming Complex Knowledge Into <br>
+        <span class="highlight">Interactive Living Software</span>
+      </h2>
+      <p class="hero-subtitle">
+        Static PDFs and passive videos are obsolete. We engineer bespoke, simulation-powered learning engines that turn abstract theory into intuitive mastery.
+      </p>
+    </div>
+
+    <!-- Flagship Showcase Card -->
+    <div class="showcase-card">
+      <div class="showcase-header">
+        <div class="showcase-label">
+          <div class="live-dot"></div>
+          Flagship Proof of Concept: SDR & FPGA Pacer
+        </div>
+        <a href="https://embedded-sdr-fpga-roadmap.vercel.app" class="showcase-url" target="_blank">embedded-sdr-fpga-roadmap.vercel.app ↗</a>
+      </div>
+      <div class="showcase-features-grid">
+        <div class="feature-box">
+          <h4>🎛️ Real-Time Canvas Simulators</h4>
+          <p>Interactive I/Q constellations, Nyquist aliasing sliders, and cycle-by-cycle AXI4-Stream bus timing visualizers directly inside the browser.</p>
+        </div>
+        <div class="feature-box">
+          <h4>📖 Interactive Domain Codex</h4>
+          <p>Instant-search field thesaurus with real-time KaTeX mathematical formula rendering, cross-concept linking, and contextual definitions.</p>
+        </div>
+        <div class="feature-box">
+          <h4>⏱️ Dynamic Pacer Architecture</h4>
+          <p>Progressive phase-based engineering roadmaps with built-in lab checkpoints, knowledge verification quizzes, and automated pacing.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- B2B Service Offer -->
+    <div class="service-banner">
+      <h3>We Build Custom Learning Platforms For Your Domain</h3>
+      <p>
+        Are you a university professor, bootcamp creator, EdTech founder, or corporate L&D leader? Nexus converts your syllabus, textbooks, and training manuals into custom, high-converting interactive platforms.
+      </p>
+      <div class="discipline-pills">
+        <div class="pill">🧬 Medicine & BioTech</div>
+        <div class="pill">📈 Quantitative Finance & Trading</div>
+        <div class="pill">✈️ Aerospace & Robotics</div>
+        <div class="pill">💻 Computer Science & AI</div>
+        <div class="pill">⚖️ Law & Regulatory Compliance</div>
+        <div class="pill">🔬 Physics & Advanced Mathematics</div>
+      </div>
+    </div>
+
+    <!-- Footer CTA -->
+    <footer class="poster-footer">
+      <div class="cta-message">
+        Ready to modernize your educational offering?
+        <span>Let's turn your raw syllabus into a world-class interactive platform in weeks.</span>
+      </div>
+      <a href="mailto:contact@techbymacharia.com" class="cta-action-btn">
+        <span>Book a Discovery Audit</span>
+        <span>→</span>
+      </a>
+    </footer>
+  </div>
+
+</body>
+</html>

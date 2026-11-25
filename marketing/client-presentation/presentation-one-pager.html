@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus | Interactive Learning Engines by Macharia Ndichu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(15, 23, 42, 0.7);
+      --border: rgba(56, 189, 248, 0.2);
+      --primary: #38bdf8;
+      --secondary: #a855f7;
+      --accent: #10b981;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* Container */
+    .wrapper {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Navbar */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      margin-bottom: 50px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0284c7, #9333ea);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: white;
+      font-size: 18px;
+    }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #fff, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .founder-tag {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .founder-tag strong {
+      color: var(--primary);
+    }
+
+    .nav-cta {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 8px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(90deg, #38bdf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 780px;
+      margin: 0 auto 30px;
+    }
+
+    .hero-btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 14px 30px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 4px 25px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    /* Live Interactive Demo Widget */
+    .demo-container {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 70px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    .demo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+
+    .demo-label {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .demo-canvas-wrapper {
+      background: #020617;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 800px;
+      height: 200px;
+      background: #090d16;
+      border-radius: 12px;
+    }
+
+    .controls-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .control-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Pillars */
+    .section-title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .section-desc {
+      text-align: center;
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 650px;
+      margin: 0 auto 40px;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 70px;
+    }
+
+    .pillar {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pillar-num {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .pillar h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .pillar p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Cross Domain Cards */
+    .domain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 70px;
+    }
+
+    .domain-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .domain-card h4 {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #f1f5f9;
+    }
+
+    .domain-card p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Pricing Section */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 70px;
+    }
+
+    .pricing-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .pricing-card.featured {
+      border-color: var(--primary);
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.2);
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .plan-name {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .plan-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+
+    .plan-features li::before {
+      content: "✓ ";
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer strong {
+      color: #fff;
+    }
+
+    @media (max-width: 900px) {
+      .pillars-grid, .domain-grid, .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero h1 { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <!-- Navbar -->
+    <nav class="nav">
+      <div class="brand-group">
+        <div class="brand-icon">N</div>
+        <div>
+          <div class="brand-name">Nexus</div>
+          <div class="founder-tag">By <strong>Macharia Ndichu</strong> • Tech by Macharia Ndichu</div>
+        </div>
+      </div>
+      <a href="mailto:contact@techbymacharia.com" class="nav-cta">Book Discovery Audit →</a>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="badge">Next-Generation Curriculum Engineering</div>
+      <h1>Transforming Dense Syllabi Into <br><span>Interactive Web Software</span></h1>
+      <p>
+        Static textbooks and passive slide decks produce 10% retention. We design and code bespoke, browser-native learning platforms equipped with live parameter simulators, dynamic pacing, and interactive field codexes.
+      </p>
+      <div class="hero-btn-row">
+        <a href="#demo" class="btn-primary">Try Interactive Widget ↓</a>
+        <a href="https://embedded-sdr-fpga-roadmap.vercel.app" target="_blank" class="btn-secondary">View SDR & FPGA Flagship ↗</a>
+      </div>
+    </header>
+
+    <!-- Interactive Simulator Showcase Widget -->
+    <section id="demo" class="demo-container">
+      <div class="demo-header">
+        <div class="demo-label">
+          <div class="pulse"></div>
+          Live Interactive Simulator Demo: Harmonic Synthesis Engine
+        </div>
+        <div style="font-size: 12px; color: var(--muted);">Runs 100% in browser (0 plugins needed)</div>
+      </div>
+      <div class="demo-canvas-wrapper">
+        <canvas id="simCanvas" width="800" height="200"></canvas>
+        <div class="controls-row">
+          <div class="control-item">
+            <label>Frequency (f₁): <span id="f1Val">2</span> Hz</label>
+            <input type="range" id="f1Slider" min="1" max="10" value="2" step="0.5">
+          </div>
+          <div class="control-item">
+            <label>Harmonic (f₂): <span id="f2Val">6</span> Hz</label>
+            <input type="range" id="f2Slider" min="1" max="20" value="6" step="1">
+          </div>
+          <div class="control-item">
+            <label>Noise Level: <span id="noiseVal">10</span>%</label>
+            <input type="range" id="noiseSlider" min="0" max="50" value="10" step="5">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 Pillars -->
+    <section>
+      <h2 class="section-title">The 4 Pillars We Build For You</h2>
+      <p class="section-desc">Every Nexus custom learning engine is engineered with our proprietary pedagogical architecture.</p>
+      <div class="pillars-grid">
+        <div class="pillar">
+          <div class="pillar-num">PILLAR 01</div>
+          <h3>Custom Web Simulators</h3>
+          <p>We write customized HTML5 Canvas & WebGL widgets where learners touch, tweak, and test domain-specific physical principles in real-time.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num">PILLAR 02</div>
+          <h3>The Domain Field Codex</h3>
+          <p>Instant client-side search thesaurus with live KaTeX mathematical proofs, syntax highlighting, and cross-concept hyperlinks.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num">PILLAR 03</div>
+          <h3>Dynamic Pacer & Quizzes</h3>
+          <p>Progressive phased roadmaps with integrated knowledge verification checkpoints and automated pacing telemetry.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num">PILLAR 04</div>
+          <h3>Turnkey CDN Deployment</h3>
+          <p>Deployed to global low-latency servers with custom SSL domain mapping, dark/light themes, and seamless LMS integration.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cross Domain Solutions -->
+    <section>
+      <h2 class="section-title">Custom Platforms Across Every Discipline</h2>
+      <p class="section-desc">From complex engineering to biological sciences, we turn any academic or corporate curriculum into software.</p>
+      <div class="domain-grid">
+        <div class="domain-card">
+          <h4>🏥 Medicine & Clinical Training</h4>
+          <p>Interactive cardiovascular hemodynamics, ECG rhythm analyzers, and pharmacokinetics titration models.</p>
+        </div>
+        <div class="domain-card">
+          <h4>📈 Quantitative Finance & Trading</h4>
+          <p>Real-time options Greeks surfaces, Black-Scholes pricing models, and order-book matching engine visualizers.</p>
+        </div>
+        <div class="domain-card">
+          <h4>✈️ Aerospace & Robotics</h4>
+          <p>Inverse kinematics solvers, flight aerodynamic lift/drag vectors, and PID tuning controllers.</p>
+        </div>
+        <div class="domain-card">
+          <h4>💻 AI & Computer Science</h4>
+          <p>Visual neural network weight layers, concurrency thread schedulers, and memory allocation sandboxes.</p>
+        </div>
+        <div class="domain-card">
+          <h4>📡 Embedded Systems & DSP</h4>
+          <p>Our flagship SDR & FPGA Pacer proving live I/Q constellations, Nyquist sampling, and AXI4-Stream bus timing.</p>
+        </div>
+        <div class="domain-card">
+          <h4>⚖️ Law & Corporate Compliance</h4>
+          <p>Interactive statutory decision trees, compliance risk calculators, and scenario-based regulatory branching.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing / Packages -->
+    <section>
+      <h2 class="section-title">Service Engagement Tiers</h2>
+      <p class="section-desc">Choose the scope that fits your educational vision. Turnaround in 2 to 4 weeks.</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="plan-name">The Core Academy</div>
+          <div class="plan-desc">For textbook authors & bootcamps modernizing existing text.</div>
+          <ul class="plan-features">
+            <li>Curriculum Architecture & Roadmap</li>
+            <li>Searchable Field Codex with KaTeX</li>
+            <li>Dynamic Milestone Pacing Tracker</li>
+            <li>Responsive Dark/Light UI</li>
+            <li>Global CDN Hosting & Domain Setup</li>
+          </ul>
+          <a href="mailto:contact@techbymacharia.com?subject=Inquiry: Core Academy" class="btn-secondary" style="text-align: center;">Inquire Core →</a>
+        </div>
+
+        <div class="pricing-card featured">
+          <div class="featured-badge">Most Popular</div>
+          <div class="plan-name">The Simulation Engine</div>
+          <div class="plan-desc">For high-complexity STEM, engineering, and finance courses.</div>
+          <ul class="plan-features">
+            <li>Everything in Core Academy</li>
+            <li><strong>3 to 5 Custom Canvas Simulators</strong></li>
+            <li>Interactive Checkpoint Quizzes</li>
+            <li>Real-Time Parameter Sliders & Graphs</li>
+            <li>Hands-on Laboratory Sandboxes</li>
+            <li>White-Label Custom Branding</li>
+          </ul>
+          <a href="mailto:contact@techbymacharia.com?subject=Inquiry: Simulation Engine" class="btn-primary" style="text-align: center;">Get Started →</a>
+        </div>
+
+        <div class="pricing-card">
+          <div class="plan-name">Enterprise Suite</div>
+          <div class="plan-desc">For corporate L&D, defense, universities & tech firms.</div>
+          <ul class="plan-features">
+            <li>Unlimited Custom WebGL Simulators</li>
+            <li>LMS & SSO Integration</li>
+            <li>Team Analytics & Completion Telemetry</li>
+            <li>Multi-Course Academy Architecture</li>
+            <li>Quarterly Content Updates & SLA</li>
+          </ul>
+          <a href="mailto:contact@techbymacharia.com?subject=Inquiry: Enterprise Suite" class="btn-secondary" style="text-align: center;">Contact Enterprise →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>
+        <strong>Nexus</strong> • Interactive Educational Software by <strong>Macharia Ndichu</strong> (Tech by Macharia Ndichu)
+      </p>
+      <p style="margin-top: 6px;">
+        Flagship Showcase: <a href="https://embedded-sdr-fpga-roadmap.vercel.app" style="color: var(--primary);" target="_blank">embedded-sdr-fpga-roadmap.vercel.app</a> | Inquiries: contact@techbymacharia.com
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Live Canvas Simulation Script
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const f1Slider = document.getElementById('f1Slider');
+    const f2Slider = document.getElementById('f2Slider');
+    const noiseSlider = document.getElementById('noiseSlider');
+    const f1Val = document.getElementById('f1Val');
+    const f2Val = document.getElementById('f2Val');
+    const noiseVal = document.getElementById('noiseVal');
+
+    let time = 0;
+
+    function render() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const f1 = parseFloat(f1Slider.value);
+      const f2 = parseFloat(f2Slider.value);
+      const noise = parseFloat(noiseSlider.value) / 100;
+
+      f1Val.innerText = f1;
+      f2Val.innerText = f2;
+      noiseVal.innerText = (noise * 100).toFixed(0);
+
+      ctx.fillStyle = '#090d16';
+      ctx.fillRect(0, 0, w, h);
+
+      // Grid
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for(let x=0; x<w; x+=40) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+      for(let y=0; y<h; y+=25) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+      ctx.stroke();
+
+      // Axis
+      ctx.strokeStyle = '#334155';
+      ctx.beginPath();
+      ctx.moveTo(0, h/2);
+      ctx.lineTo(w, h/2);
+      ctx.stroke();
+
+      // Waveform
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = '#38bdf8';
+      ctx.beginPath();
+
+      for (let x = 0; x < w; x++) {
+        const t = (x / w) * 2 * Math.PI + time;
+        const wave1 = Math.sin(t * f1);
+        const wave2 = 0.5 * Math.sin(t * f2);
+        const rand = (Math.random() - 0.5) * noise * 2;
+        const y = (h / 2) - ((wave1 + wave2 + rand) * (h * 0.28));
+
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0; // reset
+
+      time += 0.03;
+      requestAnimationFrame(render);
+    }
+
+    render();
+  </script>
+</body>
+</html>

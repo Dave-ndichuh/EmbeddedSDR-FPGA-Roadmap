@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Status / Story Card 4 | DM Macharia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #030712;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .story-card {
+      width: 450px;
+      height: 800px;
+      background: #090d16;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 28px;
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.9), 0 0 45px rgba(56, 189, 248, 0.25);
+      background-image: 
+        radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+    }
+
+    .avatar-area {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .avatar-ring {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7, #9333ea);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+      font-size: 32px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .creator-name {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .creator-sub {
+      font-size: 13px;
+      color: #38bdf8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .message-bubble {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .message-bubble h2 {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .message-bubble h2 span {
+      background: linear-gradient(90deg, #38bdf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .message-bubble p {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    .action-container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .whatsapp-btn {
+      background: #25d366;
+      color: #052e16;
+      font-size: 15px;
+      font-weight: 900;
+      padding: 16px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+    }
+
+    .alt-action {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .alt-action strong {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="story-card">
+    <div class="avatar-area">
+      <div class="avatar-ring">M</div>
+      <div class="creator-name">Macharia Ndichu</div>
+      <div class="creator-sub">Nexus • Tech by Macharia Ndichu</div>
+    </div>
+
+    <div class="message-bubble">
+      <h2>Let’s Turn Your Knowledge Into <span>Interactive Software</span></h2>
+      <p>
+        Whether you are a university professor, a course creator, a technical enterprise leader, or a student with big ideas:
+      </p>
+      <p style="margin-top: 10px; color: #e2e8f0; font-weight: 600;">
+        "Tell me the single hardest concept in your syllabus, and let's turn it into an interactive web simulation."
+      </p>
+    </div>
+
+    <div class="action-container">
+      <div class="whatsapp-btn">
+        <span>💬</span>
+        <span>Reply to this Status to Chat</span>
+      </div>
+      <div class="alt-action">
+        Or Email: <strong>contact@techbymacharia.com</strong><br>
+        Web: <strong>embedded-sdr-fpga-roadmap.vercel.app</strong>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
