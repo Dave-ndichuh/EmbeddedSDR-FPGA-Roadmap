@@ -71,6 +71,11 @@ const config: Config = {
           position: 'left',
         },
         {
+          to: '/rankings',
+          label: 'Stats & Rankings 📊',
+          position: 'left',
+        },
+        {
           href: 'https://github.com/Dave-ndichuh/EmbeddedSDR-FPGA-Roadmap',
           label: 'GitHub',
           position: 'right',

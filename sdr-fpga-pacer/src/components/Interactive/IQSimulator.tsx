@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { recordSimulatorInteraction, useInteractionStats } from '@site/src/utils/interactionStats';
 import styles from './styles.module.css';
 
-export default function IQSimulator(): JSX.Element {
+const SIM_ID = 'iq-simulator';
+const SIM_TITLE = 'Complex IQ Phasor & Constellation Analyzer';
+const SIM_PATH = '/docs/Phase-1/DSP-Theory';
+
+export default function IQSimulator(): React.ReactElement {
   const [modScheme, setModScheme] = useState<'phasor' | 'bpsk' | 'qpsk' | 'qam16'>('qpsk');
   const [noiseLevel, setNoiseLevel] = useState(10); // 0 to 50%
   const [iqImbalance, setIqImbalance] = useState(0); // dB gain skew
@@ -9,6 +14,17 @@ export default function IQSimulator(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const phaseRef = useRef<number>(0);
+  const lastLogRef = useRef<number>(0);
+  const { stats } = useInteractionStats();
+  const runCount = stats.simulators[SIM_ID]?.interactions || 0;
+
+  const logRun = (detail: string, throttleMs: number) => {
+    const now = Date.now();
+    if (now - lastLogRef.current >= throttleMs) {
+      lastLogRef.current = now;
+      recordSimulatorInteraction(SIM_ID, SIM_TITLE, detail, SIM_PATH);
+    }
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -221,9 +237,16 @@ export default function IQSimulator(): JSX.Element {
         <h3 className={styles.cardTitle}>
           <span>📡</span> Interactive Complex IQ Phasor & Constellation Engine
         </h3>
-        <span className={styles.badge + ' ' + styles.badgeInfo}>
-          {modScheme === 'phasor' ? 'Phasor LO Rotation' : `${modScheme.toUpperCase()} Constellation`}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {runCount > 0 && (
+            <span className={`${styles.badge} ${styles.badgeSuccess}`}>
+              📡 {runCount} runs
+            </span>
+          )}
+          <span className={styles.badge + ' ' + styles.badgeInfo}>
+            {modScheme === 'phasor' ? 'Phasor LO Rotation' : `${modScheme.toUpperCase()} Constellation`}
+          </span>
+        </div>
       </div>
 
       <div className={styles.controlsGrid}>
@@ -233,7 +256,10 @@ export default function IQSimulator(): JSX.Element {
             {(['phasor', 'bpsk', 'qpsk', 'qam16'] as const).map(mode => (
               <button
                 key={mode}
-                onClick={() => setModScheme(mode)}
+                onClick={() => {
+                  setModScheme(mode);
+                  logRun(`Switched constellation mode to ${mode.toUpperCase()}`, 250);
+                }}
                 style={{
                   padding: '0.35rem 0.65rem',
                   borderRadius: '6px',
@@ -261,7 +287,11 @@ export default function IQSimulator(): JSX.Element {
               min="0"
               max="40"
               value={noiseLevel}
-              onChange={(e) => setNoiseLevel(Number(e.target.value))}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                setNoiseLevel(v);
+                logRun(`Adjusted AWGN noise to ${v}%`, 1500);
+              }}
               className={styles.slider}
             />
           </div>
@@ -278,7 +308,11 @@ export default function IQSimulator(): JSX.Element {
             max="3"
             step="0.2"
             value={iqImbalance}
-            onChange={(e) => setIqImbalance(Number(e.target.value))}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setIqImbalance(v);
+              logRun(`Set IQ gain imbalance to ${v} dB`, 1500);
+            }}
             className={styles.slider}
           />
         </div>
@@ -293,7 +327,11 @@ export default function IQSimulator(): JSX.Element {
             min="-15"
             max="15"
             value={phaseSkew}
-            onChange={(e) => setPhaseSkew(Number(e.target.value))}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setPhaseSkew(v);
+              logRun(`Set phase skew to ${v}°`, 1500);
+            }}
             className={styles.slider}
           />
         </div>

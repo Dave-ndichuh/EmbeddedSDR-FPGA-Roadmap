@@ -1,11 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { recordSimulatorInteraction, useInteractionStats } from '@site/src/utils/interactionStats';
 import styles from './styles.module.css';
 
-export default function NyquistSimulator(): JSX.Element {
+const SIM_ID = 'nyquist-simulator';
+const SIM_TITLE = 'Nyquist & Aliasing Time-Domain Simulator';
+const SIM_PATH = '/docs/Phase-1/DSP-Theory';
+
+export default function NyquistSimulator(): React.ReactElement {
   const [fin, setFin] = useState(15); // Hz
   const [fs, setFs] = useState(40); // Hz
   const [enableAAF, setEnableAAF] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const lastLogRef = useRef<number>(0);
+  const { stats } = useInteractionStats();
+  const runCount = stats.simulators[SIM_ID]?.interactions || 0;
+
+  const logRun = (detail: string, throttleMs: number) => {
+    const now = Date.now();
+    if (now - lastLogRef.current >= throttleMs) {
+      lastLogRef.current = now;
+      recordSimulatorInteraction(SIM_ID, SIM_TITLE, detail, SIM_PATH);
+    }
+  };
 
   // Nyquist calculations
   const nyquistRate = 2 * fin;
@@ -126,9 +142,16 @@ export default function NyquistSimulator(): JSX.Element {
         <h3 className={styles.cardTitle}>
           <span>🎛️</span> Interactive Nyquist & Aliasing Simulator
         </h3>
-        <span className={`${styles.badge} ${isNyquistMet ? styles.badgeSuccess : styles.badgeDanger}`}>
-          {isNyquistMet ? '✅ Nyquist Satisfied' : '🚨 Aliasing Hazard!'}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {runCount > 0 && (
+            <span className={`${styles.badge} ${styles.badgeInfo}`}>
+              🎛️ {runCount} runs
+            </span>
+          )}
+          <span className={`${styles.badge} ${isNyquistMet ? styles.badgeSuccess : styles.badgeDanger}`}>
+            {isNyquistMet ? '✅ Nyquist Satisfied' : '🚨 Aliasing Hazard!'}
+          </span>
+        </div>
       </div>
 
       <div className={styles.controlsGrid}>
@@ -142,7 +165,11 @@ export default function NyquistSimulator(): JSX.Element {
             min="5"
             max="60"
             value={fin}
-            onChange={(e) => setFin(Number(e.target.value))}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setFin(v);
+              logRun(`Tuned f_in to ${v} Hz`, 1500);
+            }}
             className={styles.slider}
           />
         </div>
@@ -157,7 +184,11 @@ export default function NyquistSimulator(): JSX.Element {
             min="10"
             max="100"
             value={fs}
-            onChange={(e) => setFs(Number(e.target.value))}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setFs(v);
+              logRun(`Adjusted sampling rate to ${v} Hz`, 1500);
+            }}
             className={styles.slider}
           />
         </div>
@@ -167,7 +198,10 @@ export default function NyquistSimulator(): JSX.Element {
             <input
               type="checkbox"
               checked={enableAAF}
-              onChange={(e) => setEnableAAF(e.target.checked)}
+              onChange={(e) => {
+                setEnableAAF(e.target.checked);
+                logRun(`${e.target.checked ? 'Enabled' : 'Disabled'} Anti-Aliasing Filter`, 250);
+              }}
               style={{ width: '18px', height: '18px' }}
             />
             <span>Enable Anti-Aliasing Filter (AAF)</span>

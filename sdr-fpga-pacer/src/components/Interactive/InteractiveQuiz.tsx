@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
+import { resolveQuizCatalogItem, slugifyId } from '@site/src/data/contentCatalog';
+import {
+  recordQuizAttempt,
+  recordQuizHint,
+  useInteractionStats
+} from '@site/src/utils/interactionStats';
 import styles from './styles.module.css';
 
 interface QuizProps {
+  id?: string;
   title?: string;
   question: string;
   options: string[];
@@ -11,25 +18,45 @@ interface QuizProps {
 }
 
 export default function InteractiveQuiz({
+  id,
   title = '🧠 Knowledge Check & Intuition Challenge',
   question,
   options,
   correctIndex,
   explanation,
   hint
-}: QuizProps): JSX.Element {
+}: QuizProps): React.ReactElement {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [showHint, setShowHint] = useState<boolean>(false);
+  const { stats } = useInteractionStats();
+
+  const catalogQuiz = resolveQuizCatalogItem(title, id);
+  const quizId = catalogQuiz?.id || id || slugifyId(title);
+  const quizStat = stats.quizzes[quizId];
+  const accuracyPct =
+    quizStat && quizStat.attempts > 0
+      ? Math.round((quizStat.passes / quizStat.attempts) * 100)
+      : null;
 
   const handleSelect = (idx: number) => {
     if (isSubmitted) return;
     setSelectedIndex(idx);
   };
 
+  const handleToggleHint = () => {
+    const next = !showHint;
+    setShowHint(next);
+    if (next) {
+      recordQuizHint(quizId);
+    }
+  };
+
   const handleSubmit = () => {
     if (selectedIndex === null) return;
+    const correct = selectedIndex === correctIndex;
     setIsSubmitted(true);
+    recordQuizAttempt(quizId, correct, showHint, title, catalogQuiz?.modulePath);
   };
 
   const handleReset = () => {
@@ -46,20 +73,27 @@ export default function InteractiveQuiz({
         <h4 className={styles.cardTitle}>
           <span>💡</span> {title}
         </h4>
-        {hint && (
-          <button
-            onClick={() => setShowHint(!showHint)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--ifm-color-primary)',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}>
-            {showHint ? 'Hide Hint 🔍' : 'Need a Hint? 🔍'}
-          </button>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+          {quizStat && quizStat.attempts > 0 && (
+            <span className={`${styles.badge} ${accuracyPct !== null && accuracyPct >= 60 ? styles.badgeSuccess : styles.badgeInfo}`}>
+              {quizStat.passes}/{quizStat.attempts} Passed ({accuracyPct}%)
+            </span>
+          )}
+          {hint && (
+            <button
+              onClick={handleToggleHint}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--ifm-color-primary)',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}>
+              {showHint ? 'Hide Hint 🔍' : 'Need a Hint? 🔍'}
+            </button>
+          )}
+        </div>
       </div>
 
       {showHint && (

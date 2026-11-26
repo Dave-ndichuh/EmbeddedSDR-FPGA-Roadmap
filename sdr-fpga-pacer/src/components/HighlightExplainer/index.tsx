@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from '@docusaurus/Link';
 import katex from 'katex';
 import { findExplanation, ExplanationItem } from '@site/src/data/explainerData';
+import { recordConceptExplainer } from '@site/src/utils/interactionStats';
 import styles from './styles.module.css';
 
 function renderMath(formula?: string, displayMode: boolean = true): string {
@@ -98,6 +99,12 @@ export default function HighlightExplainer(): JSX.Element | null {
   const handleOpenModal = () => {
     setIsOpen(true);
     setTriggerPos(null);
+    if (explanation) {
+      recordConceptExplainer(explanation.id, explanation.title, 'open');
+      if (activeTab === 'derivation' && explanation.derivation) {
+        recordConceptExplainer(explanation.id, explanation.title, 'derivation');
+      }
+    }
   };
 
   const handleClose = () => {
@@ -116,6 +123,7 @@ export default function HighlightExplainer(): JSX.Element | null {
     if (!explanation) return;
     const textToCopy = `${explanation.title}\n\n[Simplified]: ${explanation.simplified}\n\n[Hardware Reality]: ${explanation.hardwareReality}`;
     navigator.clipboard.writeText(textToCopy);
+    recordConceptExplainer(explanation.id, explanation.title, 'copy');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -214,8 +222,13 @@ export default function HighlightExplainer(): JSX.Element | null {
             {explanation?.derivation && (
               <button
                 className={`${styles.tabBtn} ${activeTab === 'derivation' ? styles.tabBtnActive : ''}`}
-                onClick={() => setActiveTab('derivation')}>
-                <span>📐</span> Mathematical Derivation & Proof
+                onClick={() => {
+                  setActiveTab('derivation');
+                  if (activeTab !== 'derivation') {
+                    recordConceptExplainer(explanation.id, explanation.title, 'derivation');
+                  }
+                }}>
+                <span>📐</span> Mathematical Derivation &amp; Proof
               </button>
             )}
 

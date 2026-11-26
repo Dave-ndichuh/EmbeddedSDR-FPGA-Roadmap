@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
+import { recordSimulatorInteraction, useInteractionStats } from '@site/src/utils/interactionStats';
 import styles from './styles.module.css';
+
+const SIM_ID = 'axi-stream-visualizer';
+const SIM_TITLE = 'AXI4-Stream Bus Handshake Engine';
+const SIM_PATH = '/docs/Phase-4';
 
 interface CycleState {
   cycle: number;
@@ -10,13 +15,15 @@ interface CycleState {
   status: 'handshake' | 'backpressure' | 'idle' | 'starved';
 }
 
-export default function AXIStreamVisualizer(): JSX.Element {
+export default function AXIStreamVisualizer(): React.ReactElement {
   const [tvalid, setTvalid] = useState<number>(1);
   const [tready, setTready] = useState<number>(1);
   const [currentByte, setCurrentByte] = useState<number>(0xA0);
   const [history, setHistory] = useState<CycleState[]>([
     { cycle: 0, tvalid: 1, tready: 1, tdata: '0xA0', tlast: 0, status: 'handshake' }
   ]);
+  const { stats } = useInteractionStats();
+  const runCount = stats.simulators[SIM_ID]?.interactions || 0;
 
   const stepClock = () => {
     const nextCycle = history.length;
@@ -54,6 +61,7 @@ export default function AXIStreamVisualizer(): JSX.Element {
     // Keep rolling last 8 cycles
     const updated = [...history, newEntry].slice(-8);
     setHistory(updated);
+    recordSimulatorInteraction(SIM_ID, SIM_TITLE, `Clock edge cycle ${nextCycle} (${nextStatus})`, SIM_PATH);
   };
 
   const resetSim = () => {
@@ -71,15 +79,22 @@ export default function AXIStreamVisualizer(): JSX.Element {
         <h3 className={styles.cardTitle}>
           <span>⚡</span> Interactive AXI4-Stream Bus Handshake Engine
         </h3>
-        <span className={`${styles.badge} ${
-          lastEntry.status === 'handshake' ? styles.badgeSuccess :
-          lastEntry.status === 'backpressure' ? styles.badgeDanger :
-          styles.badgeInfo
-        }`}>
-          {lastEntry.status === 'handshake' ? '✅ Data Transferred' :
-           lastEntry.status === 'backpressure' ? '⏳ Receiver Backpressure Stalled' :
-           lastEntry.status === 'starved' ? '💨 Producer Idle' : '💤 Bus Idle'}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {runCount > 0 && (
+            <span className={`${styles.badge} ${styles.badgeInfo}`}>
+              ⚡ {runCount} cycles stepped
+            </span>
+          )}
+          <span className={`${styles.badge} ${
+            lastEntry.status === 'handshake' ? styles.badgeSuccess :
+            lastEntry.status === 'backpressure' ? styles.badgeDanger :
+            styles.badgeInfo
+          }`}>
+            {lastEntry.status === 'handshake' ? '✅ Data Transferred' :
+             lastEntry.status === 'backpressure' ? '⏳ Receiver Backpressure Stalled' :
+             lastEntry.status === 'starved' ? '💨 Producer Idle' : '💤 Bus Idle'}
+          </span>
+        </div>
       </div>
 
       <p style={{ fontSize: '0.92rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '1rem' }}>
